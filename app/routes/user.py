@@ -7,6 +7,7 @@ from .dependecies import current_user, fastapi_users
 from app.auth.auth import auth_backend
 from app.helpers.helpers import to_start, to_shutdown
 from app.schemas import UserOut, UserRead, UserCreate
+from .order_routes import order_router
 
 
 @asynccontextmanager
@@ -37,4 +38,9 @@ app.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix="/auth",
     tags=["auth"],
+)
+
+app.include_router(
+    order_router,
+    tags=['orders']
 )
