@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 from fastapi_users import schemas
 
@@ -18,7 +18,6 @@ class UserCreate(schemas.BaseUserCreate):
     username: str
     email: str
     password: Optional[str] = None
-    photo: str
     role_id: int
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
@@ -27,7 +26,6 @@ class UserCreate(schemas.BaseUserCreate):
 class BaseUser(BaseModel):
     username: str
     email: str
-    photo: str
 
 class UserOut(BaseUser):
     id: int
@@ -53,7 +51,6 @@ class OrderBase(BaseModel):
     size: str
     style: Optional[str]
     quantity: int
-    image_path: Optional[str]
     total_price: float
     full_name: str
     contact_info: str
@@ -67,14 +64,21 @@ class OrderUpdate(BaseModel):
     size: Optional[str]
     style: Optional[str]
     quantity: Optional[int]
-    image_path: Optional[str]
     total_price: Optional[float]
     status: Optional[OrderStatus]
 
+class ImageRead(BaseModel):
+    id: int
+    path: str
+
+    class Config:
+        orm_mode = True
 
 class OrderRead(OrderBase):
     id: int
     user_id: int
+    images: Optional[List[ImageRead]]
+    status: Optional[OrderStatus]
 
     class Config:
         orm_mode = True

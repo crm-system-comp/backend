@@ -8,7 +8,6 @@ from sqlalchemy.orm import relationship
 from app.database import Base, get_db
 from app.schemas import OrderType, OrderStatus
 
-
 class User(SQLAlchemyBaseUserTable[int], Base):
     __tablename__ = "users"
 
@@ -45,5 +44,13 @@ class Order(Base):
     status = Column(Enum(OrderStatus), default=OrderStatus.QUEUED, nullable=False)
 
     user = relationship("User", back_populates="orders")
+    images = relationship("Image", back_populates="order", cascade="all, delete-orphan", lazy="selectin")
 
+class Image(Base):
+    __tablename__ = "images"
 
+    id = Column(Integer, primary_key=True)
+    path = Column(String, nullable=False)
+
+    order_id = Column(Integer, ForeignKey("orders.id"))
+    order = relationship("Order", back_populates="images", lazy="selectin")
