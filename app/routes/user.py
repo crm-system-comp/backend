@@ -41,6 +41,11 @@ app.include_router(
 )
 
 app.include_router(
+    fastapi_users.get_users_router(UserRead, UserCreate),
+    tags=["me"],
+)
+
+app.include_router(
     order_router,
     tags=['orders']
 )

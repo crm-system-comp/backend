@@ -13,7 +13,7 @@ from app.routes.dependecies import current_user
 from app.schemas import OrderCreate, OrderUpdate, OrderRead
 
 
-order_router = APIRouter()
+order_router = APIRouter(prefix="/api/orders")
 
 @order_router.post("/", response_model=OrderRead)
 async def create_user_order(
