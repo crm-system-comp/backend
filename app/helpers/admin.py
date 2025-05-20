@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Order
 
-
 async def update_order_admin(
     db: AsyncSession,
     order_id: int,

@@ -19,7 +19,7 @@ async def get_all_users(
     user: User = Depends(current_user),
 ):
     is_admin(user)
-    result = await db.execute(select(User))
+    result = await db.execute(select(User).where(User.is_superuser is not True))
     return result.scalars().all()
 
 
@@ -63,7 +63,7 @@ async def admin_update_order(
 
     updated_order = await update_order_admin(db, order_id, update_data)
     if not updated_order:
-        raise HTTPException(status_code=404, detail="Order not found")
+        raise HTTPException(status_code=404, detail="Заказ не найден")
     return updated_order
 
 
@@ -76,5 +76,5 @@ async def admin_delete_order(
     is_admin(user)
     success = await delete_order_admin(db, order_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Order not found")
+        raise HTTPException(status_code=404, detail="Заказ не найден")
     return {"success": True}

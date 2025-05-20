@@ -1,12 +1,9 @@
-from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import Row, RowMapping
-from typing import List, Optional, Sequence, Any
+from typing import List, Optional, Sequence
 
-from app.helpers.helpers import save_images
 from app.models import Order, Image
-from app.schemas import OrderUpdate, OrderRead, OrderBase
+from app.schemas import OrderRead, OrderBase
 
 
 async def create_order(
