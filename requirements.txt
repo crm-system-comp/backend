@@ -13,3 +13,6 @@ aiobotocore
 fastapi_users
 fastapi_users_db_sqlalchemy
 bs4
+setuptools
+passlib
+bcrypt==4.0.1

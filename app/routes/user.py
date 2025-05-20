@@ -5,13 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .dependecies import current_user, fastapi_users
 from app.auth.auth import auth_backend
-from app.helpers.helpers import to_start, to_shutdown
+from app.helpers.helpers import to_start, to_shutdown, create_admin
 from app.schemas import UserOut, UserRead, UserCreate
 from .order_routes import order_router
+from .admin_router import admin_router
 
 @asynccontextmanager
 async def lifespan_func(app: FastAPI):
    await to_start()
+   await create_admin()
    print("База готова")
    yield
    await to_shutdown()
@@ -49,4 +51,9 @@ app.include_router(
 app.include_router(
     order_router,
     tags=['orders']
+)
+
+app.include_router(
+    admin_router,
+    tags=["admin"]
 )

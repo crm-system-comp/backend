@@ -7,10 +7,10 @@ from app.helpers.helpers import save_images
 from app.database import get_db
 from app.models import User, Order
 from app.helpers.orders import (
-    create_order, get_orders_by_user, get_order_by_id, update_order, delete_order,
+    create_order, get_orders_by_user, get_order_by_id,
 )
 from app.routes.dependecies import current_user
-from app.schemas import OrderCreate, OrderUpdate, OrderRead, OrderType, OrderStatus
+from app.schemas import OrderRead, OrderType
 
 order_router = APIRouter(prefix="/api/orders")
 
@@ -57,54 +57,3 @@ async def read_order(
     if not order or order.user_id != user.id:
         raise HTTPException(status_code=404, detail="Order not found")
     return order
-
-@order_router.put("/{order_id}", response_model=OrderUpdate)
-async def update_user_order(
-    order_id: int,
-    order_type: OrderType = Form(...),
-    status: OrderStatus = Form(...),
-    size: Optional[str] = Form(None),
-    style: Optional[str] = Form(None),
-    quantity: Optional[int] = Form(None),
-    total_price: Optional[float] = Form(None),
-    full_name: Optional[str] = Form(None),
-    contact_info: Optional[str] = Form(None),
-    db: AsyncSession = Depends(get_db),
-    user: User = Depends(current_user),
-):
-
-    update_data = {
-        "type": order_type,
-        "status": status,
-        "size": size,
-        "style": style,
-        "quantity": quantity,
-        "total_price": total_price,
-        "full_name": full_name,
-        "contact_info": contact_info,
-    }
-    update_data = {k: v for k, v in update_data.items() if v is not None}
-
-    updated_order = await update_order(
-        db=db,
-        order_id=order_id,
-        user_id=user.id,
-        update_data=update_data,
-    )
-
-    if not updated_order:
-        raise HTTPException(status_code=404, detail="Order not found")
-
-    return updated_order
-
-@order_router.delete("/{order_id}")
-async def delete_user_order(
-    order_id: int,
-    db: AsyncSession = Depends(get_db),
-    user: User = Depends(current_user),
-):
-    order = await get_order_by_id(db, order_id)
-    if not order or order.user_id != user.id:
-        raise HTTPException(status_code=404, detail="Order not found")
-    success = await delete_order(db, order_id)
-    return {"success": success}
