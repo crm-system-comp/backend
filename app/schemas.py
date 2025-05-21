@@ -61,11 +61,14 @@ class OrderCreate(OrderBase):
     pass
 
 class OrderUpdate(BaseModel):
-    size: Optional[str]
-    style: Optional[str]
-    quantity: Optional[int]
-    total_price: Optional[float]
+    order_type: Optional[OrderType]
     status: Optional[OrderStatus]
+    size: Optional[str] = None
+    style: Optional[str] = None
+    quantity: Optional[int] = None
+    total_price: Optional[float] = None
+    full_name: Optional[str] = None
+    contact_info: Optional[str] = None
 
 class ImageRead(BaseModel):
     id: int
