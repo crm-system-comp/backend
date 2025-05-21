@@ -3,7 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
 from app.database import get_db
-from app.helpers.admin import update_order_admin, delete_order_admin
+from app.helpers.admin import update_order_admin, delete_order_admin, select_all_users, select_user_by_id, \
+    select_all_orders
 from app.helpers.helpers import is_admin
 from app.models import User, Order
 from app.schemas import UserOut, OrderRead, OrderStatus, OrderType, OrderUpdate
@@ -19,8 +20,7 @@ async def get_all_users(
     user: User = Depends(current_user),
 ):
     is_admin(user)
-    result = await db.execute(select(User).where(User.is_superuser is not True))
-    return result.scalars().all()
+    return await select_all_users(db)
 
 @admin_router.get("/users/{user_id}", response_model=UserOut)
 async def get_user_by_id(
@@ -29,8 +29,7 @@ async def get_user_by_id(
     user: User = Depends(current_user),
 ):
     is_admin(user)
-    result = await db.execute(select(User).where(User.id == user_id))
-    user_data = result.scalar_one_or_none()
+    user_data = await select_user_by_id(db, user_id)
     if not user_data:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     return user_data
@@ -41,9 +40,7 @@ async def get_all_orders(
     user: User = Depends(current_user),
 ):
     is_admin(user)
-    result = await db.execute(select(Order))
-    return result.scalars().all()
-
+    return await select_all_orders(db)
 
 @admin_router.put("/orders/{order_id}", response_model=OrderRead)
 async def admin_update_order(

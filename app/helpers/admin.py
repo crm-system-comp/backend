@@ -3,7 +3,20 @@ from typing import Optional, Any
 from sqlalchemy import select, Row, RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Order
+from app.models import Order, User
+
+async def select_user_by_id(db: AsyncSession, user_id: int):
+    result = await db.execute(select(User).where(User.id == user_id))
+    user_data = result.scalar_one_or_none()
+    return user_data
+
+async def select_all_orders(db: AsyncSession):
+    result = await db.execute(select(Order))
+    return result.scalars().all()
+
+async def select_all_users(db: AsyncSession):
+    result = await db.execute(select(User).where(User.is_superuser is not True))
+    return result.scalars().all()
 
 async def update_order_admin(
     db: AsyncSession,
